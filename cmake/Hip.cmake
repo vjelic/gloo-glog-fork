@@ -13,10 +13,6 @@ ELSE()
   SET(HIP_PATH $ENV{HIP_PATH})
 ENDIF()
 
-IF(NOT EXISTS ${HIP_PATH})
-  return()
-ENDIF()
-
 # HCC_PATH
 IF(NOT DEFINED ENV{HCC_PATH})
   SET(HCC_PATH ${ROCM_PATH}/hcc)
@@ -101,7 +97,7 @@ ELSE()
 ENDIF()
 
 # Add HIP to the CMAKE Module Path
-set(CMAKE_MODULE_PATH ${HIP_PATH}/cmake ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH ${ROCM_PATH}/lib/cmake/hip ${CMAKE_MODULE_PATH})
 
 # Disable Asserts In Code (Can't use asserts on HIP stack.)
 ADD_DEFINITIONS(-DNDEBUG)
@@ -121,11 +117,8 @@ IF(HIP_FOUND)
 
   set(CMAKE_HCC_FLAGS_DEBUG ${CMAKE_CXX_FLAGS_DEBUG})
   set(CMAKE_HCC_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE})
-  FIND_LIBRARY(GLOO_HIP_HCC_LIBRARIES ${hip_library_name} HINTS ${HIP_PATH}/lib)
-  # Necessary includes for building Gloo since we include HIP headers that depend on hcc/hsa headers.
-  set(hcc_INCLUDE_DIRS ${HCC_PATH}/include)
-  set(hsa_INCLUDE_DIRS ${HSA_PATH}/include)
 
+  FIND_LIBRARY(GLOO_HIP_HCC_LIBRARIES ${hip_library_name} HINTS ${ROCM_PATH}/lib)
 ENDIF()
 
 ################################################################################
